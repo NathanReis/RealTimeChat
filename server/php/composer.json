@@ -1,0 +1,22 @@
+{
+    "name": "nathanreis/realtimechat",
+    "description": "A real-time chat using websockets",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nathan Reis",
+            "email": "nathansilvareis@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "Source\\": "source/"
+        }
+    },
+    "require": {
+        "cboden/ratchet": "0.4.*"
+    }
+}
