@@ -69,27 +69,23 @@ function checkTextIsValid(text) {
  * 
  * @returns WebSocket
  */
- function connectWebSocket() {
-    let connection = new WebSocket("ws://localhost:8080");
+function connectWebSocket() {
+    let connection = io("ws://localhost:8080");
 
-    connection.onopen = function(e) {
-        formInputs.addEventListener("submit", handleSendMessage);
+    formInputs.addEventListener("submit", handleSendMessage);
 
-        console.log("Conexão estabelecida!");
-    };
-
-    connection.onmessage = function(e) {
+    connection.on("message", function (e) {
         let {
             name,
             text
-        } = JSON.parse(e.data);
+        } = JSON.parse(e);
 
         showMessage({
             name,
             text,
             isMyMessage: false
         });
-    };
+    });
 
     return connection;
 }
@@ -135,7 +131,7 @@ function handleSendMessage(event) {
     let name = nameInput.value;
     let text = textInput.value;
 
-    webSocketConnection.send(JSON.stringify({
+    webSocketConnection.emit("message", JSON.stringify({
         name,
         text
     }));
@@ -155,7 +151,7 @@ function handleSendMessage(event) {
  * 
  * @param {object} dataMessage
  */
-function showMessage({name, text, isMyMessage}) {
+function showMessage({ name, text, isMyMessage }) {
     messagesElement.innerHTML += `
         <div class="message w-100 mb-3">
             <div class="d-flex flex-column ${isMyMessage ? "align-items-end" : ""}">
