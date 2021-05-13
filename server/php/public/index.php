@@ -12,13 +12,17 @@ require_once implode(
     [__DIR__, "..", "vendor", "autoload.php"]
 );
 
+$PORT = 8080;
+
 $server = IoServer::factory(
     new HttpServer(
         new WsServer(
             new Chat()
         )
     ),
-    8080
+    $PORT
 );
+
+echo "Server is running on port {$PORT}!" . PHP_EOL;
 
 $server->run();
