@@ -1,29 +1,25 @@
 import express from "express";
 import http from "http";
-import { Server, Socket } from "socket.io";
+import WebSocket from "ws";
 
 const PORT = process.env.PORT || 8080;
 
 let app = express();
-let server = http.createServer(app);
-let io = new Server(server, {
-    cors: {
-        origin: "*"
-    }
-});
+let httpServer = http.createServer(app);
+let webSocketServer = new WebSocket.Server({ server: httpServer });
 
-io.on("connection", (socket: Socket) => {
-    console.log(`Nova conexão: ${socket.id}`);
+webSocketServer.on("connection", (connection: WebSocket) => {
+    console.log("Nova conexão");
 
-    socket.on("disconnect", () => {
-        console.log(`Conexão encerrada: ${socket.id}`);
-    });
-
-    socket.on("message", (message: any) => {
-        socket.broadcast.emit("message", message);
+    connection.on("message", (message: WebSocket.Data) => {
+        webSocketServer.clients.forEach((connectionStored: WebSocket) => {
+            if (connectionStored !== connection) {
+                connectionStored.send(message);
+            }
+        });
     });
 });
 
-server.listen(PORT, () => {
+httpServer.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}!`);
 });
