@@ -73,9 +73,21 @@ function connectWebSocket() {
     let connection = new WebSocket("ws://localhost:8080");
 
     connection.onopen = function (e) {
-        formInputs.addEventListener("submit", handleSendMessage);
+        showFormWhenConnected();
 
         console.log("Conexão estabelecida!");
+    };
+
+    connection.onerror = function (e) {
+        showFormWhenDisconnected();
+
+        let name = nameInput.value;
+
+        showMessage({
+            name: name,
+            text: "Erro de conexão com socket",
+            isMyMessage: true
+        });
     };
 
     connection.onmessage = function (e) {
@@ -107,14 +119,7 @@ function handleRequestConnection(event) {
         return;
     }
 
-    formInputs.removeEventListener("submit", handleRequestConnection);
-
     nameInput.classList.remove("is-invalid");
-    nameInput.disabled = true;
-
-    textInput.classList.remove("d-none");
-
-    btnSubmitForm.innerHTML = "Enviar";
 
     webSocketConnection = connectWebSocket();
 }
@@ -124,9 +129,9 @@ function handleSendMessage(event) {
 
     textInput.value = textInput.value.trim();
 
-    let nameIsValid = checkTextIsValid(textInput.value);
+    let textIsValid = checkTextIsValid(textInput.value);
 
-    if (!nameIsValid) {
+    if (!textIsValid) {
         textInput.classList.add("is-invalid");
 
         return;
@@ -148,6 +153,28 @@ function handleSendMessage(event) {
 
     textInput.classList.remove("is-invalid");
     textInput.value = "";
+}
+
+function showFormWhenDisconnected() {
+    nameInput.disabled = false;
+
+    textInput.classList.add("d-none");
+
+    btnSubmitForm.innerHTML = "Conectar";
+
+    formInputs.removeEventListener("submit", handleSendMessage);
+    formInputs.addEventListener("submit", handleRequestConnection);
+}
+
+function showFormWhenConnected() {
+    nameInput.disabled = true;
+
+    textInput.classList.remove("d-none");
+
+    btnSubmitForm.innerHTML = "Enviar";
+
+    formInputs.removeEventListener("submit", handleRequestConnection);
+    formInputs.addEventListener("submit", handleSendMessage);
 }
 
 /**
