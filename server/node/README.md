@@ -18,6 +18,8 @@ git clone https://github.com/NathanReis/RealTimeChat.git
 
 cd RealTimeChat/server/node
 
+cp .env.example .env
+
 yarn
 
 yarn dev
