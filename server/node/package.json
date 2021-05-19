@@ -4,7 +4,7 @@
   "description": "A real-time chat using websockets",
   "author": "Nathan Reis",
   "license": "MIT",
-  "private": true,
+  "private": false,
   "scripts": {
     "dev": "ts-node-dev src/server.ts"
   },
